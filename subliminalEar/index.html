@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Genetic Algorithm Evolution - www.ctrl-h.org™© KMR</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        
+        .controls {
+            margin: 20px 0;
+        }
+        
+        .input-section {
+            margin: 20px 0;
+        }
+        
+        textarea {
+            width: 100%;
+            min-height: 100px;
+            background: #222;
+            color: #0f0;
+            border: 1px solid #0f0;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        
+        button {
+            background: #333;
+            color: #fff;
+            border: 1px solid #666;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        button:hover {
+            background: #555;
+        }
+        
+        .slider-container {
+            margin: 15px 0;
+        }
+        
+        .slider {
+            width: 400px;
+            height: 30px;
+        }
+        
+        .info-display {
+            background: #111;
+            border: 1px solid #333;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        
+        .layer-info {
+            margin: 5px 0;
+            color: #0ff;
+        }
+        
+        .fitness-info {
+            color: #0f0;
+            margin: 5px 0;
+        }
+        
+        .playing {
+            background: #050 !important;
+            border-color: #0f0 !important;
+        }
+    </style>
+</head>
+<body>
+    <h1>Audio Genetic Algorithm Evolution</h1>
+    
+    <div class="input-section">
+        <textarea id="binaryInput" placeholder="Enter binary string...">1111110111111101111111010011001100110011111111011111110111111101111111011111110111111101111111011111110111111101111111011111110111111101001100111111111110110011101000101100101011110000101101001011011100101001011101001010110010101100110101010101111000101010</textarea>
+        <button onclick="setBinary()">Set Binary Data</button>
+    </div>
+    
+    <div class="controls">
+        <div class="slider-container">
+            <label>Genetic Algorithm Evolution: </label>
+            <input 
+                type="range" 
+                id="evolutionSlider"
+                min="-100" 
+                max="100" 
+                step="0.01" 
+                value="0" 
+                class="slider"1111111111111111111
+                oninput="handleEvolutionChange(this.value)"
+            />
+            <span id="evolutionValue">0</span>
+            <button onclick="evolvePopulation()">Evolve</button>
+        </div>
+        
+        <div class="slider-container">
+            <label>Mutation Rate: </label>
+            <input 
+                type="range" 
+                id="mutationSlider" 
+                class="slider" 
+                min="1" 
+                max="20" 
+                value="5" 
+                step="0.1" 
+                oninput="updateMutationRate(this.value)"
+            />
+            <span id="mutationValue">5%</span>
+        </div>
+        
+        <div>
+            <button onclick="playSound()" id="playBtn">Play Sound</button>
+            <button onclick="stopSound()">Stop Sound</button>
+            <button onclick="resetGeneticAlgorithm()">Reset Population</button>
+        </div>
+    </div>
+    
+    <div class="info-display" id="infoDisplay">
+        <div class="fitness-info">Fitness: <span id="fitnessValue">0</span></div>
+        <div class="layer-info">Layers: <span id="layerCount">0</span></div>
+        <div class="layer-info">Generation: <span id="generationCount">0</span></div>
+        <div class="layer-info">Diversity: <span id="diversityValue">0%</span></div>
+        <div id="layerDetails"></div>
+    </div>
+    
+    <p>www.lithography.ctrl-h.org</p>
+
+    <script>
+        let audioContext;
+        let currentOscillators = [];
+        let binaryString = '';
+        let mutationRate = 0.05;
+        let population = [];
+        let populationSize = 256;
+        let currentGeneration = 0;
+        let targetLength = 0;
+        let isPlaying = false;
+        let loopTimeout = null;
+
+        function initAudioContext() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function setBinary() {
+            binaryString = document.getElementById('binaryInput').value.replace(/[^01]/g, '');
+            if (binaryString.length < 64) {
+                binaryString = binaryString.padEnd(64, '0');
+            }
+            document.getElementById('binaryInput').value = binaryString;
+            initializePopulation();
+            updateDisplay();
+        }
+
+        function binaryToFrequency(binarySubstring) {
+            const value = parseInt(binarySubstring, 2);
+            const minFreq = 20;
+            const maxFreq = 4000;
+            return minFreq + (value / 65535) * (maxFreq - minFreq);
+        }
+
+        function binaryToDuration(binarySubstring) {
+            const value = parseInt(binarySubstring, 2);
+            return 0.1 + (value / 65535) * 2.9;
+        }
+
+        function binaryToDelay(binarySubstring) {
+            const value = parseInt(binarySubstring, 2);
+            return (value / 65535) * 0.5;
+        }
+
+        function parseSoundFromBinary(binary) {
+            const layers = [];
+            let index = 0;
+            
+            if (binary.length < 16) return layers;
+            
+            const layerCountBits = binary.substring(0, 4);
+            const layerCount = Math.max(1, Math.min(8, parseInt(layerCountBits, 2) + 1));
+            index = 4;
+            
+            for (let i = 0; i < layerCount && index + 48 <= binary.length; i++) {
+                const pitchBits = binary.substring(index, index + 16);
+                const durationBits = binary.substring(index + 16, index + 32);
+                const delayBits = binary.substring(index + 32, index + 48);
+                
+                if (pitchBits.length === 16 && durationBits.length === 16 && delayBits.length === 16) {
+                    layers.push({
+                        frequency: binaryToFrequency(pitchBits),
+                        duration: binaryToDuration(durationBits),
+                        delay: binaryToDelay(delayBits),
+                        pitchBits: pitchBits,
+                        durationBits: durationBits,
+                        delayBits: delayBits
+                    });
+                }
+                
+                index += 48;
+            }
+            
+            return layers;
+        }
+
+        function playSound() {
+            if (isPlaying) {
+                stopSound();
+            }
+            
+            initAudioContext();
+            const layers = parseSoundFromBinary(binaryString);
+            
+            if (layers.length === 0) {
+                console.log('No valid layers to play');
+                return;
+            }
+            
+            isPlaying = true;
+            document.getElementById('playBtn').classList.add('playing');
+            
+            let maxEndTime = 0;
+            layers.forEach((layer, index) => {
+                const endTime = (layer.delay + layer.duration) * 1000;
+                if (endTime > maxEndTime) {
+                    maxEndTime = endTime;
+                }
+            });
+            
+            layers.forEach((layer, index) => {
+                setTimeout(() => {
+                    if (!isPlaying) return;
+                    
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.type = 'sine';
+                    oscillator.frequency.setValueAtTime(layer.frequency, audioContext.currentTime);
+                    
+                    gainNode.gain.setValueAtTime(0.2 / layers.length, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + layer.duration);
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + layer.duration);
+                    
+                    currentOscillators.push({ oscillator, gainNode });
+                    
+                    oscillator.onended = () => {
+                        const idx = currentOscillators.findIndex(o => o.oscillator === oscillator);
+                        if (idx > -1) {
+                            currentOscillators.splice(idx, 1);
+                        }
+                    };
+                }, layer.delay * 1000);
+            });
+            
+            loopTimeout = setTimeout(() => {
+                if (isPlaying) {
+                    playSound();
+                }
+            }, maxEndTime);
+        }
+
+        function stopSound() {
+            currentOscillators.forEach(({ oscillator }) => {
+                try {
+                    oscillator.stop();
+                } catch (e) {}
+            });
+            currentOscillators = [];
+            isPlaying = false;
+            if (loopTimeout) {
+                clearTimeout(loopTimeout);
+                loopTimeout = null;
+            }
+            document.getElementById('playBtn').classList.remove('playing');
+        }
+
+        function updateDisplay() {
+            const layers = parseSoundFromBinary(binaryString);
+            document.getElementById('layerCount').textContent = layers.length;
+            document.getElementById('generationCount').textContent = currentGeneration;
+            
+            if (population.length > 1) {
+                const diversity = calculatePopulationDiversity();
+                document.getElementById('diversityValue').textContent = (diversity * 100).toFixed(1) + '%';
+            }
+            
+            let detailsHtml = '';
+            layers.forEach((layer, idx) => {
+                detailsHtml += `<div style="color: #888; margin: 3px 0;">
+                    Layer ${idx + 1}: ${layer.frequency.toFixed(1)}Hz, ${layer.duration.toFixed(2)}s, delay ${layer.delay.toFixed(2)}s
+                    <br>&nbsp;&nbsp;[pitch: ${layer.pitchBits}, dur: ${layer.durationBits}, delay: ${layer.delayBits}]
+                </div>`;
+            });
+            document.getElementById('layerDetails').innerHTML = detailsHtml;
+            
+            if (population.length > 0) {
+                document.getElementById('fitnessValue').textContent = population[0].fitness.toFixed(4);
+            }
+        }
+
+        function createRandomBinaryString(length) {
+            let result = '';
+            for (let i = 0; i < length; i++) {
+                result += Math.floor(Math.random() * 2);
+            }
+            return result;
+        }
+
+        function createVariationFromCurrent(baseString, mutationRate = 0.1) {
+            let result = '';
+            for (let i = 0; i < baseString.length; i++) {
+                if (Math.random() < mutationRate) {
+                    result += baseString[i] === '0' ? '1' : '0';
+                } else {
+                    result += baseString[i];
+                }
+            }
+            return result;
+        }
+
+        function initializePopulation() {
+            population = [];
+            targetLength = binaryString.length;
+            
+            population.push({
+                dna: binaryString,
+                fitness: 0
+            });
+            
+            let variationCount = Math.floor(populationSize * 0.7);
+            for (let i = 1; i <= variationCount; i++) {
+                population.push({
+                    dna: createVariationFromCurrent(binaryString, 0.05 + (i / variationCount) * 0.15),
+                    fitness: 0
+                });
+            }
+            
+            while (population.length < populationSize) {
+                population.push({
+                    dna: createRandomBinaryString(targetLength),
+                    fitness: 0
+                });
+            }
+            
+            calculateFitness();
+        }
+
+        function calculateFitness() {
+            const evolutionValue = parseFloat(document.getElementById('evolutionSlider').value);
+            
+            for (let individual of population) {
+                let fitness = 0;
+                const dna = individual.dna;
+                const layers = parseSoundFromBinary(dna);
+                
+                if (layers.length === 0) {
+                    individual.fitness = -1;
+                    continue;
+                }
+                
+                let frequencyDiversity = 0;
+                let durationBalance = 0;
+                let harmonicScore = 0;
+                
+                const freqBuckets = new Array(10).fill(0);
+                layers.forEach(layer => {
+                    const bucket = Math.min(9, Math.floor((layer.frequency - 20) / 400));
+                    freqBuckets[bucket]++;
+                });
+                frequencyDiversity = freqBuckets.filter(c => c > 0).length / 10;
+                
+                const avgDuration = layers.reduce((sum, l) => sum + l.duration, 0) / layers.length;
+                durationBalance = 1 - layers.reduce((sum, l) => sum + Math.abs(l.duration - avgDuration), 0) / (layers.length * 3);
+                
+                if (layers.length > 1) {
+                    for (let i = 0; i < layers.length - 1; i++) {
+                        const ratio = layers[i].frequency / layers[i + 1].frequency;
+                        const nearHarmonic = [0.5, 1.5, 2.0, 1.333, 0.667].some(h => Math.abs(ratio - h) < 0.1);
+                        if (nearHarmonic) harmonicScore += 1;
+                    }
+                    harmonicScore = harmonicScore / (layers.length - 1);
+                }
+                
+                const layerScore = Math.min(1, layers.length / 5);
+                
+                individual.fitness = (
+                    frequencyDiversity * 0.25 + 
+                    durationBalance * 0.2 + 
+                    harmonicScore * 0.25 + 
+                    layerScore * 0.1 + 
+                    evolutionValue * 0.2
+                );
+            }
+            
+            population.sort((a, b) => b.fitness - a.fitness);
+        }
+
+        function selectParents() {
+            const parentPool = population.slice(0, Math.floor(populationSize / 2));
+            const parent1 = parentPool[Math.floor(Math.random() * parentPool.length)];
+            const parent2 = parentPool[Math.floor(Math.random() * parentPool.length)];
+            return [parent1, parent2];
+        }
+
+        function crossover(parent1, parent2) {
+            if (Math.random() < 0.5) {
+                const crossoverPoint = Math.floor(Math.random() * targetLength);
+                const child1DNA = parent1.dna.substring(0, crossoverPoint) + parent2.dna.substring(crossoverPoint);
+                const child2DNA = parent2.dna.substring(0, crossoverPoint) + parent1.dna.substring(crossoverPoint);
+                return [
+                    { dna: child1DNA, fitness: 0 },
+                    { dna: child2DNA, fitness: 0 }
+                ];
+            } else {
+                const point1 = Math.floor(Math.random() * targetLength);
+                const point2 = Math.floor(Math.random() * targetLength);
+                const [start, end] = point1 < point2 ? [point1, point2] : [point2, point1];
+                
+                const child1DNA = parent1.dna.substring(0, start) + parent2.dna.substring(start, end) + parent1.dna.substring(end);
+                const child2DNA = parent2.dna.substring(0, start) + parent1.dna.substring(start, end) + parent2.dna.substring(end);
+                return [
+                    { dna: child1DNA, fitness: 0 },
+                    { dna: child2DNA, fitness: 0 }
+                ];
+            }
+        }
+        
+        function calculatePopulationDiversity() {
+            if (population.length < 2) return 1.0;
+            
+            let totalDifferences = 0;
+            let comparisons = 0;
+            
+            for (let i = 0; i < Math.min(20, population.length - 1); i++) {
+                for (let j = i + 1; j < Math.min(20, population.length); j++) {
+                    let differences = 0;
+                    for (let k = 0; k < targetLength; k++) {
+                        if (population[i].dna[k] !== population[j].dna[k]) {
+                            differences++;
+                        }
+                    }
+                    totalDifferences += differences;
+                    comparisons++;
+                }
+            }
+            
+            return comparisons > 0 ? totalDifferences / (comparisons * targetLength) : 1.0;
+        }
+
+        function mutate(individual) {
+            let mutatedDNA = '';
+            for (let i = 0; i < individual.dna.length; i++) {
+                if (Math.random() < mutationRate) {
+                    mutatedDNA += individual.dna[i] === '0' ? '1' : '0';
+                } else {
+                    mutatedDNA += individual.dna[i];
+                }
+            }
+            individual.dna = mutatedDNA;
+        }
+
+        function evolvePopulation() {
+            if (population.length === 0) {
+                initializePopulation();
+                return;
+            }
+            
+            const diversity = calculatePopulationDiversity();
+            
+            const newPopulation = [];
+            
+            const eliteCount = Math.floor(populationSize * 0.1);
+            for (let i = 0; i < eliteCount; i++) {
+                newPopulation.push({ ...population[i] });
+            }
+            
+            let freshInjectionCount = 0;
+            if (diversity < 0.15) {
+                freshInjectionCount = Math.floor(populationSize * 0.2);
+            } else if (diversity < 0.25) {
+                freshInjectionCount = Math.floor(populationSize * 0.1);
+            }
+            
+            for (let i = 0; i < freshInjectionCount; i++) {
+                if (Math.random() < 0.7) {
+                    newPopulation.push({
+                        dna: createVariationFromCurrent(population[0].dna, 0.2 + Math.random() * 0.3),
+                        fitness: 0
+                    });
+                } else {
+                    newPopulation.push({
+                        dna: createRandomBinaryString(targetLength),
+                        fitness: 0
+                    });
+                }
+            }
+            
+            while (newPopulation.length < populationSize) {
+                const [parent1, parent2] = selectParents();
+                const [child1, child2] = crossover(parent1, parent2);
+                
+                const adaptiveMutationChance = diversity < 0.2 ? 0.95 : 0.8;
+                if (Math.random() < adaptiveMutationChance) mutate(child1);
+                if (Math.random() < adaptiveMutationChance) mutate(child2);
+                
+                newPopulation.push(child1);
+                if (newPopulation.length < populationSize) {
+                    newPopulation.push(child2);
+                }
+            }
+            
+            population = newPopulation;
+            calculateFitness();
+            
+            binaryString = population[0].dna;
+            document.getElementById('binaryInput').value = binaryString;
+            
+            currentGeneration++;
+            updateDisplay();
+        }
+
+        function resetGeneticAlgorithm() {
+            currentGeneration = 0;
+            binaryString = document.getElementById('binaryInput').value.replace(/[^01]/g, '');
+            initializePopulation();
+            updateDisplay();
+        }
+
+        function updateMutationRate(value) {
+            mutationRate = parseFloat(value) / 100;
+            document.getElementById('mutationValue').textContent = value + '%';
+        }
+
+        function updateEvolutionValue(value) {
+            document.getElementById('evolutionValue').textContent = value;
+        }
+
+        function handleEvolutionChange(value) {
+            updateEvolutionValue(value);
+            evolvePopulation();
+            playSound();
+        }
+
+        window.onload = function() {
+            setBinary();
+        };
+    </script>
+</body>
+</html>

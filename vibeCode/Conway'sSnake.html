@@ -1,0 +1,57 @@
+<html>
+<head>
+  <style>
+  </style>
+</head>
+<body>
+  
+   <canvas id="mazeCanvas" float : left width=50% height=10%></canvas>
+</body>
+<script>
+const log = console.log;
+// Snake x Conway's Game of Life const canvas = document.createElement('canvas'); const 
+let canvas
+canvas={
+  width:400,
+  height:400
+  
+}
+let ctx = canvas.getContext('2d'); document.body.appendChild(canvas);
+//canvas=canvas.width = 400; 
+//canvas=canvas.height = 400;
+
+const CELL_SIZE = 10; const COLS = canvas.width / CELL_SIZE; const ROWS = canvas.height / CELL_SIZE;
+
+let snake = [{ x: 5, y: 5 }]; let direction = { x: 1, y: 0 }; let lifeGrid = createLifeGrid(); let tick = 0;
+
+function createLifeGrid() { const grid = []; for (let y = 0; y < ROWS; y++) { grid[y] = []; for (let x = 0; x < COLS; x++) { grid[y][x] = Math.random() < 0.1 ? 1 : 0; } } return grid; }
+
+function nextLifeGen(grid) { const next = grid.map(arr => arr.slice()); for (let y = 0; y < ROWS; y++) { for (let x = 0; x < COLS; x++) { let liveNeighbors = 0; for (let j = -1; j <= 1; j++) { for (let i = -1; i <= 1; i++) { if (i === 0 && j === 0) continue; const nx = x + i, ny = y + j; if (nx >= 0 && ny >= 0 && nx < COLS && ny < ROWS) { liveNeighbors += grid[ny][nx]; } } } if (grid[y][x]) { next[y][x] = (liveNeighbors === 2 || liveNeighbors === 3) ? 1 : 0; } else { next[y][x] = liveNeighbors === 3 ? 1 : 0; } } } return next; }
+
+function draw() { ctx.fillStyle = 'black'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
+// Draw life cells ctx.fillStyle = 'lime'; for (let y = 0; y < ROWS; y++) { for (let x = 0; x < COLS; x++) { if (lifeGrid[y][x]) ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE); } }
+
+// Draw snake ctx.fillStyle = 'white'; for (const part of snake) { ctx.fillRect(part.x * CELL_SIZE, part.y * CELL_SIZE, CELL_SIZE, CELL_SIZE); } }
+
+function update() { const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
+}
+// Wrap around head.x = (head.x + COLS) % COLS; head.y = (head.y + ROWS) % ROWS;
+
+// Check self collision if (snake.some(p => p.x === head.x && p.y === head.y)) { alert('Game Over'); snake = [{ x: 5, y: 5 }]; lifeGrid = createLifeGrid(); return; }
+
+// Eat life cell if (lifeGrid[head.y][head.x]) { snake.unshift(head); lifeGrid[head.y][head.x] = 0; } else { snake.pop(); snake.unshift(head); }
+
+// Evolve Life Grid every 10 ticks if (++tick % 10 === 0) { lifeGrid = nextLifeGen(lifeGrid); } }
+
+function loop() { update(); draw(); requestAnimationFrame(loop); }
+
+window.addEventListener('keydown', e => { if (e.key === 'ArrowUp' && direction.y !== 1) direction = { x: 0, y: -1 }; if (e.key === 'ArrowDown' && direction.y !== -1) direction = { x: 0, y: 1 }; if (e.key === 'ArrowLeft' && direction.x !== 1) direction = { x: -1, y: 0 }; if (e.key === 'ArrowRight' && direction.x !== -1) direction = { x: 1, y: 0 }; });
+
+loop();
+
+
+</script>
+</html>
+
+

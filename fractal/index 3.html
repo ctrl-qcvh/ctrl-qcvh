@@ -1,0 +1,257 @@
+<html>
+<head>
+  <style>
+    body { margin: 0; }
+    div {
+      position: absolute;
+      right: 16px;
+      top: 16px;
+      width: 20%;
+      background: rgba(255, 255, 255, 0.4);
+      padding: 8px;
+      border-radius: 16px;
+      border: solid 2px #ccc;
+      font-size: 0.7rem;
+      color: #f1f2f3;
+      font-family: courier;
+    }
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block; 
+    }
+  </style>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.174.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.174.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+</body>
+<script type="module">
+  // Import Three.js and necessary post-processing components
+  import * as THREE from 'three';
+  import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+  import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+  import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+
+  // Initialize Three.js core components
+  const scene = new THREE.Scene();
+  const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1); // Simple 2D camera
+  const renderer = new THREE.WebGLRenderer();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(renderer.domElement);
+
+  // Create shader material for fractal rendering
+  const fractalMaterial = new THREE.ShaderMaterial({
+    uniforms: {
+      u_time: { value: 0.0 }, // Time uniform for animation
+      u_resolution: { // Screen resolution uniform
+        value: new THREE.Vector2(window.innerWidth, window.innerHeight)
+      }
+    },
+    vertexShader: `
+      // Standard vertex shader passing UV coordinates
+      varying vec2 vUv;
+      void main() {
+        vUv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: `
+      // Uniforms and varyings
+      uniform float u_time;
+      uniform vec2 u_resolution;
+      varying vec2 vUv;
+
+      // Ray marching constants
+      #define MAX_STEPS 50
+      #define MAX_DIST 50.0
+      #define SURF_DIST 0.001
+
+      // Mandelbulb distance estimator function
+      float calculateMandelbulbDistance(vec3 position) {
+        vec3 z = position;
+        float derivative = 1.0;
+        float radius = 0.0;
+        float power = 8.0 + tan(u_time * 0.2) * 2.0;
+
+        for (int i = 0; i < 4; i++) {
+          radius = length(z);
+          if (radius > 2.0) break;
+
+          // Convert to spherical coordinates
+          float theta = acos(z.z/radius);
+          float phi = atan(z.y, z.x);
+          derivative = pow(radius, power-1.0) * power * derivative + 1.0;
+
+          // Calculate new position
+          float zRadius = pow(radius, power);
+          theta = theta * power;
+          phi = phi * power;
+
+          z = zRadius * vec3(
+            tan(theta) * tan(phi),
+            sin(phi) * sin(theta),
+            cos(theta)
+          );
+          z += position;
+        }
+        return 0.5 * log(radius) * radius / derivative;
+      }
+
+      // Ray marching function
+      float rayMarch(vec3 rayOrigin, vec3 rayDirection) {
+        float distanceTraveled = 0.0;
+        for(int i = 0; i < MAX_STEPS; i++) {
+          vec3 currentPosition = rayOrigin + rayDirection * distanceTraveled;
+          float distanceToSurface = calculateMandelbulbDistance(currentPosition);
+          distanceTraveled += distanceToSurface;
+          if(distanceTraveled > MAX_DIST || distanceToSurface < SURF_DIST) break;
+        }
+        return distanceTraveled;
+      }
+
+      // Calculate surface normal using finite differences
+      vec3 calculateSurfaceNormal(vec3 position) {
+        float distance = calculateMandelbulbDistance(position);
+        vec2 epsilon = vec2(0.001, 0);
+        vec3 normal = distance - vec3(
+          calculateMandelbulbDistance(position - epsilon.xyy),
+          calculateMandelbulbDistance(position - epsilon.yxy),
+          calculateMandelbulbDistance(position - epsilon.yyx)
+        );
+        return normalize(normal);
+      }
+
+      void main() {
+        // Normalize pixel coordinates to [-1,1] range
+        vec2 uv = (vUv - 0.5) * u_resolution.xy/u_resolution.y;
+        
+        // Animate camera position
+        float cameraTime = u_time * 0.3;
+        vec3 rayOrigin = vec3(
+          sin(cameraTime) * 2.0,
+          cos(cameraTime) * 2.0,
+          -2.0 + sin(u_time * 0.1)
+        );
+        vec3 lookAtTarget = vec3(0.0);
+        
+        // Calculate camera vectors
+        vec3 forwardDirection = normalize(lookAtTarget - rayOrigin);
+        vec3 rightDirection = normalize(cross(vec3(0,1,0), forwardDirection));
+        vec3 upDirection = cross(forwardDirection, rightDirection);
+        vec3 rayDirection = normalize(forwardDirection + uv.x * rightDirection + uv.y * upDirection);
+
+        // Perform ray marching
+        float marchDistance = rayMarch(rayOrigin, rayDirection);
+        
+        // Initialize color
+        vec3 finalColor = vec3(0.0);
+        
+        // If we hit a surface
+        if(marchDistance < MAX_DIST) {
+          vec3 surfacePosition = rayOrigin + rayDirection * marchDistance;
+          vec3 surfaceNormal = calculateSurfaceNormal(surfacePosition);
+          
+          // Animate light position
+          vec3 lightPosition = vec3(sin(u_time), 5.0, cos(u_time));
+          vec3 lightDirection = normalize(lightPosition - surfacePosition);
+          
+          // Base color with animation
+          vec3 baseColor = vec3(
+            0.25 + 0.25 * sin(surfacePosition.x + u_time),
+            0.25 + 0.25 * sin(surfacePosition.y + u_time * 0.7),
+            0.25 + 0.25 * sin(surfacePosition.z + u_time * 0.3)
+          );
+          
+          // Diffuse lighting
+          float diffuseStrength = clamp(dot(surfaceNormal, lightDirection), 0.0, 1.0);
+          vec3 diffuseColor = baseColor * diffuseStrength * 0.5;
+          
+          // Specular highlights
+          vec3 reflectionDirection = reflect(-lightDirection, surfaceNormal);
+          float specularStrength = pow(max(dot(reflectionDirection, -rayDirection), 0.0), 32.0);
+          
+          // Edge glow effect
+          float glowStrength = clamp(1.0 - dot(surfaceNormal, -rayDirection), 0.0, 1.0);
+          glowStrength = pow(glowStrength, 2.0) * 0.15;
+          
+          // Specular color
+          vec3 specularColor = vec3(0.5, 0.4, 0.3);
+          
+          // Combine all lighting components
+          finalColor = diffuseColor +              
+                      baseColor * 0.15 + // Ambient
+                      specularColor * specularStrength * 0.5 +
+                      baseColor * glowStrength;       
+          
+          // Tone mapping to prevent over-bright colors
+          float maxColorComponent = max(max(finalColor.r, finalColor.g), finalColor.b);
+          if (maxColorComponent > 0.6) {
+            finalColor = finalColor * (0.6 / maxColorComponent);
+          }
+          finalColor = mix(finalColor, vec3(0.1), 0.2); // Add some darkness
+          
+          finalColor = clamp(finalColor, 0.0, 1.0); // Ensure colors are valid
+        }
+        
+        // Background color
+        vec3 backgroundColor = vec3(0.0, 0.0, 0.0);
+        // Smooth transition between object and background
+        finalColor = mix(backgroundColor, finalColor, 
+                        smoothstep(MAX_DIST-1.0, MAX_DIST-5.0, marchDistance));
+        
+        // Gamma correction
+        finalColor = pow(finalColor, vec3(0.4));
+        
+        // Output final color
+        gl_FragColor = vec4(finalColor, 1.0);
+      }
+    `
+  });
+
+  // Create full-screen plane for shader rendering
+  const planeGeometry = new THREE.PlaneGeometry(2, 2);
+  const fractalPlane = new THREE.Mesh(planeGeometry, fractalMaterial);
+  scene.add(fractalPlane);
+
+  // Set up post-processing pipeline
+  const postProcessor = new EffectComposer(renderer);
+  const mainRenderPass = new RenderPass(scene, camera);
+  postProcessor.addPass(mainRenderPass);
+
+  // Add bloom effect for glowing highlights
+  const bloomEffect = new UnrealBloomPass(
+    new THREE.Vector2(window.innerWidth, window.innerHeight),
+    0.5, // bloom strength
+    0.4, // bloom radius
+    0.4  // bloom threshold
+  );
+  postProcessor.addPass(bloomEffect);
+
+  // Animation loop
+  function animate(currentTime) {
+    fractalMaterial.uniforms.u_time.value = currentTime * 0.01;
+    postProcessor.render();
+    requestAnimationFrame(animate);
+  }
+
+  // Handle window resize
+  window.addEventListener("resize", () => {
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    postProcessor.setSize(window.innerWidth, window.innerHeight);
+    fractalMaterial.uniforms.u_resolution.value.set(
+      window.innerWidth,
+      window.innerHeight
+    );
+  });
+
+  // Start animation
+  animate(0);
+</script>
+</html>

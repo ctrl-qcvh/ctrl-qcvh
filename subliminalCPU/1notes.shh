@@ -1,0 +1,496 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>insideTheBlackBox www.ctrl-h.org™© KMR</title>
+<style>
+    body {
+        background-color: black;
+        color: white; /* Set font color to white for better visibility */
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(128, 5px);
+        grid-template-rows: repeat(224, 5px);
+        gap: 0;
+        width: 500px;
+        height: 500px;
+    }
+
+    .pixel {
+        width: 5px;
+        height: 5px;
+        border-radius: 1px;
+        
+    }
+</style>
+
+<div class="grid"></div>
+
+<script>
+    // Create the grid with 128 * 224 pixels (divs)
+    const grid = document.querySelector('.grid');
+    const totalPixels = 128 * 224;
+
+    // Loop to create each pixel div
+    for (let i = 0; i < totalPixels; i++) {
+        const pixel = document.createElement('div');
+        pixel.classList.add('pixel');
+        
+        // Add a character inside the pixel
+        pixel.textContent = '@'; // You can replace '@' with any character
+        
+        grid.appendChild(pixel);
+    }
+</script>
+
+
+
+
+
+
+The luminance values divided into 8 perceptually equal parts on a logarithmic scale are approximately:
+
+1. 1.0
+2. 2.55
+3. 7.19
+4. 14.92
+5. 25.75
+6. 39.67
+7. 56.69
+8. 76.80
+9. 100.0
+
+These values reflect equal perceptual steps in brightness from 1 to 100.
+/*
+c00();c01();c02();c03();c04();c05();
+c10();c11();c12();c13();c14();c15(); 
+c20();c21();c22();c23();c24();c25();
+c30();c31();c32();c33();c34();c35(); 
+c40();c41();c42();c43();c44();c45();
+c50();c51();c52();c53();c54();c55();
+
+
+b00();b01();b02();b03();b04();b05();
+b10();b11();b12();b13();b14();b15();
+b20();b21();b22();b23();b24();b25();
+b30();b31();b32();b33();b34();b35();
+b40();b41();b42();b43();b44();b45();
+b50();b51();b52();b53();b54();b55();
+*/
+
+
+
+
+
+
+
+function c00()
+{
+ pixelGrid[i][j].style.backgroundColor = color1
+}
+function c01()
+{
+pixelGrid[i][j+1].style.backgroundColor = color1
+}
+function c02()
+{
+pixelGrid[i][j+2].style.backgroundColor = color1
+}
+function c03()
+{
+pixelGrid[i][j+3].style.backgroundColor = color1
+}
+function c04()
+{
+pixelGrid[i][j+4].style.backgroundColor = color1
+}
+function c05()
+{
+pixelGrid[i][j+5].style.backgroundColor = color1
+}
+function c10()
+{
+ pixelGrid[i+1][j].style.backgroundColor = color1
+}
+function c11()
+{
+pixelGrid[i+1][j+1].style.backgroundColor = color1
+}
+function c12()
+{
+pixelGrid[i+1][j+2].style.backgroundColor = color1
+}
+function c13()
+{
+pixelGrid[i+1][j+3].style.backgroundColor = color1
+}
+function c14()
+{
+pixelGrid[i+1][j+4].style.backgroundColor = color1
+}
+function c15()
+{
+pixelGrid[i+1][j+5].style.backgroundColor = color1
+}
+function c20()
+{
+ pixelGrid[i+2][j].style.backgroundColor = color1
+}
+function c21()
+{
+pixelGrid[i+2][j+1].style.backgroundColor = color1
+}
+function c22()
+{
+pixelGrid[i+2][j+2].style.backgroundColor = color1
+}
+function c23()
+{
+pixelGrid[i+2][j+3].style.backgroundColor = color1
+}
+function c24()
+{
+pixelGrid[i+2][j+4].style.backgroundColor = color1
+}
+function c25()
+{
+pixelGrid[i+2][j+5].style.backgroundColor = color1
+}
+function c30()
+{
+ pixelGrid[i+3][j].style.backgroundColor = color1
+}
+function c31()
+{
+pixelGrid[i+3][j+1].style.backgroundColor = color1
+}
+function c32()
+{
+pixelGrid[i+3][j+2].style.backgroundColor = color1
+}
+function c33()
+{
+pixelGrid[i+3][j+3].style.backgroundColor = color1
+}
+function c34()
+{
+pixelGrid[i+3][j+4].style.backgroundColor = color1
+}
+function c35()
+{
+pixelGrid[i+3][j+5].style.backgroundColor = color1
+}
+function c40()
+{
+ pixelGrid[i+4][j].style.backgroundColor = color1
+}
+function c41()
+{
+pixelGrid[i+4][j+1].style.backgroundColor = color1
+}
+function c42()
+{
+pixelGrid[i+4][j+2].style.backgroundColor = color1
+}
+function c43()
+{
+pixelGrid[i+4][j+3].style.backgroundColor = color1
+}
+function c44()
+{
+pixelGrid[i+4][j+4].style.backgroundColor = color1
+}
+function c45()
+{
+pixelGrid[i+4][j+5].style.backgroundColor = color1
+}
+function c50()
+{
+ pixelGrid[i+5][j].style.backgroundColor = color1
+}
+function c51()
+{
+pixelGrid[i+5][j+1].style.backgroundColor = color1
+}
+function c52()
+{
+pixelGrid[i+5][j+2].style.backgroundColor = color1
+}
+function c53()
+{
+pixelGrid[i+5][j+3].style.backgroundColor = color1
+}
+function c54()
+{
+pixelGrid[i+5][j+4].style.backgroundColor = color1
+}
+function c55()
+{
+pixelGrid[i+5][j+5].style.backgroundColor = color1
+}
+ 
+
+ function b00()
+{
+ pixelGrid[i][j].style.backgroundColor = "black"
+}
+function b01()
+{
+pixelGrid[i][j+1].style.backgroundColor = "black"
+}
+function b02()
+{
+pixelGrid[i][j+2].style.backgroundColor = "black"
+}
+function b03()
+{
+pixelGrid[i][j+3].style.backgroundColor = "black"
+}
+function b04()
+{
+pixelGrid[i][j+4].style.backgroundColor = "black"
+}
+function b05()
+{
+pixelGrid[i][j+5].style.backgroundColor = "black"
+}
+function b10()
+{
+ pixelGrid[i+1][j].style.backgroundColor = "black"
+}
+function b11()
+{
+pixelGrid[i+1][j+1].style.backgroundColor = "black"
+}
+function b12()
+{
+pixelGrid[i+1][j+2].style.backgroundColor = "black"
+}
+function b13()
+{
+pixelGrid[i+1][j+3].style.backgroundColor = "black"
+}
+function b14()
+{
+pixelGrid[i+1][j+4].style.backgroundColor = "black"
+}
+function b15()
+{
+pixelGrid[i+1][j+5].style.backgroundColor = "black"
+}
+function b20()
+{
+ pixelGrid[i+2][j].style.backgroundColor = "black"
+}
+function b21()
+{
+pixelGrid[i+2][j+1].style.backgroundColor = "black"
+}
+function b22()
+{
+pixelGrid[i+2][j+2].style.backgroundColor = "black"
+}
+function b23()
+{
+pixelGrid[i+2][j+3].style.backgroundColor = "black"
+}
+function b24()
+{
+pixelGrid[i+2][j+4].style.backgroundColor = "black"
+}
+function b25()
+{
+pixelGrid[i+2][j+5].style.backgroundColor = "black"
+}
+function b30()
+{
+ pixelGrid[i+3][j].style.backgroundColor = "black"
+}
+function b31()
+{
+pixelGrid[i+3][j+1].style.backgroundColor = "black"
+}
+function b32()
+{
+pixelGrid[i+3][j+2].style.backgroundColor = "black"
+}
+function b33()
+{
+pixelGrid[i+3][j+3].style.backgroundColor = "black"
+}
+function b34()
+{
+pixelGrid[i+3][j+4].style.backgroundColor = "black"
+}
+function b35()
+{
+pixelGrid[i+3][j+5].style.backgroundColor = "black"
+}
+function b40()
+{
+ pixelGrid[i+4][j].style.backgroundColor = "black"
+}
+function b41()
+{
+pixelGrid[i+4][j+1].style.backgroundColor = "black"
+}
+function b42()
+{
+pixelGrid[i+4][j+2].style.backgroundColor = "black"
+}
+function b43()
+{
+pixelGrid[i+4][j+3].style.backgroundColor = "black"
+}
+function b44()
+{
+pixelGrid[i+4][j+4].style.backgroundColor = "black"
+}
+function b45()
+{
+pixelGrid[i+4][j+5].style.backgroundColor = "black"
+}
+function b50()
+{
+ pixelGrid[i+5][j].style.backgroundColor = "black"
+}
+function b51()
+{
+pixelGrid[i+5][j+1].style.backgroundColor = "black"
+}
+function b52()
+{
+pixelGrid[i+5][j+2].style.backgroundColor = "black"
+}
+function b53()
+{
+pixelGrid[i+5][j+3].style.backgroundColor = "black"
+}
+function b54()
+{
+pixelGrid[i+5][j+4].style.backgroundColor = "black"
+}
+function b55()
+{
+pixelGrid[i+5][j+5].style.backgroundColor = "black"
+}
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Genetic Algorithm Binary String</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    #output { margin-top: 10px; font-size: 1.2em; }
+  </style>
+</head>
+<body>
+  <h3>Genetic Algorithm Binary String</h3>
+  <label>
+    Fitness bias (-1.0000 to 1.0000): 
+    <input id="slider" type="range" min="-1" max="1" step="0.0001" value="0">
+    <span id="sliderVal">0.0000</span>
+  </label>
+  
+  <div id="output"></div>
+  <button id="evolveBtn">Evolve</button>
+
+  <script>
+    // --- Parameters ---
+    const STR_LEN = 16;       // binary string length
+    const POP_SIZE = 50;      // population size
+    const MUT_RATE = 0.05;    // mutation rate
+
+    // --- Load or init binary string ---
+    let bestString = localStorage.getItem("binaryString");
+    if (!bestString) {
+      bestString = randomBinaryString(STR_LEN);
+      localStorage.setItem("binaryString", bestString);
+    }
+
+    const slider = document.getElementById("slider");
+    const sliderVal = document.getElementById("sliderVal");
+    const output = document.getElementById("output");
+
+    sliderVal.textContent = slider.value;
+
+    slider.addEventListener("input", () => {
+      sliderVal.textContent = parseFloat(slider.value).toFixed(4);
+    });
+
+    function randomBinaryString(len) {
+      return Array.from({length: len}, () => Math.random() < 0.5 ? "0" : "1").join("");
+    }
+
+    function mutate(str) {
+      return str.split("").map(ch => 
+        Math.random() < MUT_RATE ? (ch === "0" ? "1" : "0") : ch
+      ).join("");
+    }
+
+    function crossover(a, b) {
+      const point = Math.floor(Math.random() * a.length);
+      return a.slice(0, point) + b.slice(point);
+    }
+
+    // Fitness: influenced by slider (-1 → prefer zeros, 1 → prefer ones)
+    function fitness(str, bias) {
+      const ones = str.split("").filter(x => x === "1").length;
+      const zeros = str.length - ones;
+      return bias >= 0 ? ones * bias : zeros * -bias;
+    }
+
+    function evolve() {
+      const bias = parseFloat(slider.value);
+      let population = Array.from({length: POP_SIZE}, () => randomBinaryString(STR_LEN));
+      population[0] = bestString; // keep best so far
+
+      for (let gen = 0; gen < 50; gen++) {
+        // evaluate fitness
+        const scored = population.map(str => ({ str, score: fitness(str, bias) }));
+        scored.sort((a, b) => b.score - a.score);
+        bestString = scored[0].str;
+
+        // breed new population
+        const newPop = [bestString]; // elitism
+        while (newPop.length < POP_SIZE) {
+          const parentA = scored[Math.floor(Math.random() * POP_SIZE / 2)].str;
+          const parentB = scored[Math.floor(Math.random() * POP_SIZE / 2)].str;
+          let child = crossover(parentA, parentB);
+          child = mutate(child);
+          newPop.push(child);
+        }
+        population = newPop;
+      }
+
+      localStorage.setItem("binaryString", bestString);
+      output.textContent = `Best Binary String: ${bestString}`;
+    }
+
+    document.getElementById("evolveBtn").addEventListener("click", evolve);
+
+    // Show initial state
+    output.textContent = `Best Binary String: ${bestString}`;
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+cells Numberd from 0-144
+00000000-11111111
+y down x across 
+i/n and j/m gives accurate cell block locations n=12 m=12 (i/n) (j/m)= cell block/12 =block id

@@ -1,0 +1,4 @@
+[remote "origin"]
+    url = https://github.com/ctrl-qcvh/ctrl-h.git
+    fetch = +refs/heads/*:refs/remotes/origin/*
+    push = +refs/heads/main:refs/heads/main
