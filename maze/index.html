@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dynamic Triangular Maze</title>
+  <style>
+    body { margin: 0; background: black; }
+    canvas { display: block; margin: auto; background: #000; }
+  </style>
+</head>
+<body>
+   <canvas id="mazeCanvas" float : left width=50% height=10%></canvas>
+  
+
+  <script>
+    const canvas = document.getElementById('mazeCanvas');
+    const ctx = canvas.getContext('2d');
+
+
+function resizeCanvas() {
+  const dpr = window.devicePixelRatio || 1; // Detect screen DPI
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+
+  canvas.width = width * dpr;
+  canvas.height = height * dpr;
+
+  canvas.style.width = width + 'px';
+  canvas.style.height = height + 'px';
+
+  ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset transform
+  ctx.scale(dpr, dpr); // Scale drawing for high-res
+}
+    
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    const side = 4; // side length of each triangle
+    const height = Math.sqrt(3) / 2 * side;
+
+    function drawMaze() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.strokeStyle = "#fff";
+      ctx.lineWidth = 0.6;
+
+      for (let y = 0; y < canvas.height + height; y += height) {
+        for (let x = 0; x < canvas.width + side; x += side/2) {
+          const up = Math.random() > 0.5; // Randomly point up or down
+
+          if (x%4==0) {
+            drawTriangle(x, y, true);
+          } else {
+            drawTriangle(x, y, false);
+          }
+        }
+      }
+    }
+
+    function drawTriangle(x, y, upward) {
+      const h = height;
+
+      ctx.beginPath();
+      if (upward) {
+        ctx.moveTo(x, y);
+        if(Math.random()<0.5)
+        {
+        ctx.lineTo(x + side / 2, y - h);
+      }
+      if(Math.random()<0.5) {
+        ctx.lineTo(x - side / 2, y - h);
+      }
+      if(Math.random()<0.5)
+      {
+      x=x-side/2,
+      y=y-h
+      ctx.moveTo(x,y)
+      ctx.lineTo(x+side/2,y)
+      } }
+      
+      else {
+        ctx.moveTo(x, y);
+        if(Math.random<0.5){
+        ctx.lineTo(x + side / 2, y + h);
+        }
+        if(Math.random()<0.5){
+        ctx.lineTo(x - side / 2, y + h);
+      }
+      }
+      ctx.closePath();
+
+      if (Math.random() > 0.7) {
+        ctx.stroke(); // Draw open triangle
+      } else {
+        ctx.fillStyle = "#fff";
+        //ctx.fill(); // Draw filled triangle for blocked path
+      }
+    }
+
+    // Loop every few seconds
+    setInterval(drawMaze, 20);
+    drawMaze();
+  </script>
+</body>
+</html>

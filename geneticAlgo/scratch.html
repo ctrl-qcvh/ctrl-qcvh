@@ -1,0 +1,78 @@
+
+<html>
+
+<head>
+
+  <style>
+  </style>
+</head>
+<body>
+    <input type="range" min="0.000" max=".999" value="0" step="0.001" id="slider" onchange="successRaitSet();">
+    <button onchange="minusIncrement"></button><button onchange="plusIncrement">plus</button><button onchange="saveGeneration()"
+</body>
+<script>
+const log = console.log;
+let tempJson=localStorage.getItem("geneticObj")
+let geneticObj=JSON.parse(tempJson)
+log(tempJson)
+let binaryArray=["000","001","010","011","100","101","110","111"];
+let size=50
+if(geneticObj==null){
+
+geneticObj ={
+ valueArr:[]
+ mutationRate: 0.01
+ fitness0:slider0
+ successRait:1.00
+}}
+//multiple geen lines
+//select make an array as clickable buttons from 0.000-1.000 which stay for N seconds after first click
+//crossover rait*
+//elite select int
+//better? next
+//worse? back in memory
+function plusIncrement(increment)
+{
+ geneticObj.successRait+=increment
+}
+ function minusIncrement()
+ {
+ geneticObj.successRait-=increment
+ }
+function initializeArr()
+{
+for(let m=0;m<50;m++)
+{
+ valueAre[m]=Math.random
+}
+}
+initializeArr()
+function successRaitSet()
+{
+ geneticObj.successRait=document.getElementByIs("slider").value
+ log(geneticObj.successRait)
+}
+function mutate()
+{
+ for(let N=0;N<size;N++){
+  if(geneticObj.successRait>)
+if(geneticObj.valueArr[N]<=geneticObj.mutationRate)
+{
+ let temp= geneticObj.valueArr[N]*geneticObj.mutationRate//add some random 
+  geneticObj.valueArr[N]=temp
+  
+}
+}
+}
+function saveGeneration()
+{
+ generationArray.append(data)
+ localStorage.setItem("generationArray")=generationArray
+}
+
+</script>
+</html>
+
+
+
+

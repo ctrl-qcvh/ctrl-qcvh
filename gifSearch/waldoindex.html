@@ -1,0 +1,163 @@
+<html>
+<head>
+  <style>
+  </style>
+</head>
+<body>
+<input type="text" id="newGif" value=""placeholder="testing purposes"></input>
+<button onClick="appendGifUrl()">start</button>
+
+  <p id='gifs'></p>
+  <div id="imageList">FOUND</div>
+</body>
+<script>
+const log = console.log;
+log("This is a shortcut!");
+
+let randGifArr=["<img src=\"https://i.giphy.com/So1vCvcR8GPbEQt2B8.webp\"alt=\"\"style=\"width:20%\">"
+]
+
+
+let hiddenArr=["https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP._VXqqQeRtNryAGUDSo8FVwHaQm%26pid%3DApi&f=1&ipt=ebfe487c75d8242df1eab7b4cd69e892fc0a9ad6e17442b4c66e388934328c42&ipo=images","https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.pinimg.com%2Foriginals%2F69%2F80%2F93%2F698093e43b2c9411ee2b1b234e6feae2.png&f=1&nofb=1&ipt=1382b90534aaf11f78aea5e29fb87119dc659f4ca9394151ed5b1c79ad0d4940&ipo=images","https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwally.walker.co.uk%2Fimages%2Fwoof.png&f=1&nofb=1&ipt=6c7652ca85d59c4051cd238d5da68826afa7025156897fa0c2c7b324ec8518a1&ipo=images","https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.FCfZNfj_RYlTjc8wQYeNdgAAAA%26pid%3DApi&f=1&ipt=91db9d911a2b5929443b61d0823df8d6c9662c3ccac8e50b7b3bd49bbb1322fb&ipo=images","https://img.pokemondb.net/sprites/home/normal/2x/avif/bulbasaur.avif"]
+//<img src=\"xxx\"alt=\"\"style=\"width:12px;height:18px;\" onClick=\"appendClickableImageToList(this.src)\">"
+
+
+let maxCells=8000
+let frontTag = "<img src=\""
+let endTag = "\"alt=\"\"style=\"height:18px;\" onClick=\"appendClickableImageToList(this.src);\">"
+let randArr=[]
+
+function creatRandArray()
+{
+ for(let randIndex=0;randIndex<hiddenArr.length;randIndex++)
+ {
+  randArr[randIndex]=Math.floor(Math.random() * maxCells);
+ }
+}
+
+
+
+let randomNumber;
+let randomCharacterPickerNumberArr=[]
+function addUniqueRandomNumber(maxValue) {
+ randomCharacterPickerNumberArr=[]
+    for(let lazy=0;lazy<999;lazy++)
+    {
+        randomNumber = Math.floor(Math.random() * maxValue);
+    if(randomCharacterPickerNumberArr.includes(randomNumber))
+    {
+    }
+    else {
+    randomCharacterPickerNumberArr.push(randomNumber);
+}
+ console.log(randomCharacterPickerNumberArr)
+}
+}
+
+
+
+
+
+
+
+
+
+function appendGifUrl()
+{
+//<!DOCTYPE html>let gif="<img src=\""+document.getElementById("newGif").value+"\"alt=\"\"style=\"width:12px;height:18px;\">"
+//console.log(randGifArr)
+//randGifArr.push(gif)
+creatRandArray()
+addUniqueRandomNumber(hiddenArr.length)
+let concatString=''
+let hiddenCharIndex=0
+let c=0
+for(let i =0;i<maxCells;i++)
+{
+ 
+ if (randArr.includes(i)) {
+  
+  concatString = concatString.concat(frontTag + hiddenArr[randomCharacterPickerNumberArr[c]] + endTag);
+  c++
+  
+  
+  
+  
+
+
+
+
+
+
+//hidden characters appendnig in order. no!
+
+
+
+
+
+
+
+
+
+
+ }
+ else{
+  concatString=concatString.concat(randGifArr[Math.floor(Math.random ()*(randGifArr.length))])
+ }
+}
+document.getElementById('gifs').innerHTML=concatString
+document.getElementById("imageList").innerHTML="FOUND"
+}
+
+
+
+
+
+  document.querySelectorAll('.clickable').forEach(img => {
+ img.addEventListener("click", () => {
+  imageUrl = img.src; // Get the clicked image's URL
+  event.target.onclick = function () {
+            };
+  appendClickableImageToList(imageUrl); // Pass the URL to your function
+ });
+});
+
+
+
+
+
+function appendClickableImageToList(url) {
+    // Find the list by ID
+    //const list = document.getElementById(listId);
+console.log("workedurl"+url)
+    // Create the list item
+//const listItem = document.createElement("li");
+
+    // Create the clickable link
+    const link = document.createElement("a");
+    link.href = this.src//needs to be the corret img url
+    console.log("link"+ link)
+    link.target = "_blank"; // Opens the link in a new tab
+
+    // Create the image element
+    let image = document.createElement("img");
+    image = "<img src=\""+url+"\"alt=\"\"style=\"height:90px;\">"
+    console.log(image)
+   // image.alt = altText;
+//    image.style.cursor = "pointer"; // Changes the cursor to pointer on hover
+
+    // Append the image to the link, and the link to the list item
+    
+    
+    document.getElementById("imageList").innerHTML+=image
+    link.appendChild(image);
+    //listItem.appendChild(link);
+
+    // Append the list item to the list
+    //list.appendChild(listItem);
+}
+
+
+appendGifUrl()
+</script>
+</html>

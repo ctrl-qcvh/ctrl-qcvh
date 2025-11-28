@@ -1,0 +1,163 @@
+<html>
+<head>
+  <style>
+  </style>
+</head>
+<body>
+<input type="text" id="newGif" value=""placeholder="testing purposes"></input>
+<button onClick="appendGifUrl()">start</button>
+
+  <p id='gifs'></p>
+  <div id="imageList">FOUND</div>
+</body>
+<script>
+const log = console.log;
+log("This is a shortcut!");
+
+let randGifArr=["<img src=\"https://media.giphy.com/media/VJTmRfhRC3bsOrSj09/giphy.gif\"alt=\"\"style=\"width:14px;height:18px;\">","<img src=\"https://media.giphy.com/media/lP3BmOz1ql43hl6O9u/giphy.gif\"alt=\"禍\"style=\"width:18px;height:18px;\">","<img src=\"https://media.giphy.com/media/ftfaPEkGeGoyi4Zj6u/giphy.gif\"alt=\"和\"style=\"width:18px;height:18px;\">","<img src=\"https://tinyurl.com/guof257\"alt=\"你\"style=\"width:12px;height:18px;\">","<img src=\"https://i.giphy.com/media/3oEdv2c6eLyo0youha/giphy.gif\"alt=\"an\"style=\"width:12px;height:18px;\">","<img src=\"https://i.giphy.com/media/xTeVhuTdoNuO43rRV6/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://i.giphy.com/media/3ornjW5j6ipUyaJKMM/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://i.giphy.com/media/3o85xIHAYlTYQ4k75e/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://i.giphy.com/media/26BkOdJEHTXzYXPCU/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://i.giphy.com/media/d7g2iyZ87sUYq3rijP/giphy.webp\"alt=\"\"style=\"width:18px;height:18px;\">","<img src=\"https://media.giphy.com/media/VcAYxjxCLVEvC9XXo3/giphy.gif\"alt=\"上\"style=\"width:18px;height:18px;\">","<img src=\"https://media.giphy.com/media/RiErgocenOqkSscTNr/giphy.gif\"alt=\"为\"style=\"width:12px;height:18px;\">","<img src=\"https://media.tenor.com/images/678d46b26133d4c8365a3df9d52954b6/tenor.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://media.giphy.com/media/LpA6sV8CzyYPbqOXR1/giphy.gif\"alt=\"它\"style=\"width:12px;height:18px\">","<img src=\"https://i.giphy.com/media/l41lT2zEGwdiM7Kak/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://i.giphy.com/media/xTiTnu11a1UGHXtq6Y/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://i.giphy.com/media/3o6ZtjYapo349T8qoU/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://i.giphy.com/media/3oEduSnuemy5ZHXsJO/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://i.giphy.com/media/xTiTnmPl7l6ZTYSwcE/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://i.giphy.com/media/xTiTnk69u3Hyiq0ais/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://media3.giphy.com/media/V0DVntYHF57Wz3fPGj/giphy.gif?cid=790b76111fd6d8bb8e22da961d2134b4653e592999aa3e7c&rid=giphy.gif&ct=g\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://i.giphy.com/media/l41lH5NsjDEiDWCv6/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://i.giphy.com/media/3oEduKnBAu7YKrQnZe/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://media.giphy.com/media/1gUWgFlEUjChNGAvsX/giphy.gif\"alt=\"視\"style=\"width:12px;height:18px;\">","<img src=\"https://i.giphy.com/media/l2YOi6zcDk4cIf54I/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://i.giphy.com/media/3o7ZeyI4EGZOeJ1yms/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://i.giphy.com/media/26tPeG2nWe6hZSNfq/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://i.giphy.com/media/xTiTnEzCI71PPUVlte/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://i.giphy.com/media/3ornkeB8cKQJqH7fdC/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://media.giphy.com/media/3o85xBBRMPGaCZeVZS/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://i.giphy.com/media/l41lQBx3plpTrPLCo/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://media.giphy.com/media/3o85xBoEMIjvJuGLte/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://media.giphy.com/media/3oEduGGPaFbDZpMjkI/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://i.giphy.com/media/V8P8GnGBSR0qtDYDv8/giphy.webp\"alt=\"\"style=\"width:18px;height:18px\">","<img src=\"https://media.giphy.com/media/l41m19PvmP8jJ8TD2/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://i.giphy.com/media/3oEduZwlbL0TJTyjSw/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://i.giphy.com/media/3o85xAt6V72mb3ejjW/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://media.giphy.com/media/l41m2qMaOef9YnMDC/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://media.giphy.com/media/W1r6RmqEFtoKwhG5GK/giphy.gif\"alt=\"乃\"style=\"width:12px;height:18px;\">","<img src=\"https://media.giphy.com/media/QZE4mse8LnyGzTrvHq/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://i.giphy.com/media/l3nWaOyTRZ5OW2xLa/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://i.giphy.com/media/xTiTnee61zbuu928FO/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://i.giphy.com/media/3oEduQIJr8p5Q1PtQY/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://media.giphy.com/media/l41lOIy8lhQO0cTu0/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://i.giphy.com/media/l0COH6zOJwfrkrE2s/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://i.giphy.com/media/xTiTnnc0TL0XwkF98Q/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://media.giphy.com/media/KzDaSR3hk7f0EANOl8/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://media.giphy.com/media/LPfMCq2g7dnleXbCA2/giphy.gif\"alt=\"的\"style=\"width:18px;height:18px\">","<img src=\"https://media.giphy.com/media/3o85xGs4V4L3Xzb3y0/200.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://i.giphy.com/media/3o85xLxxjHRxfLV5g4/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://media.giphy.com/media/J4zBcMlvAhlJrrhIKn/giphy.gif\"alt=\"\"style=\"width:18px;height:18px;\">","<img src=\"https://media.giphy.com/media/3oEduSC4fDSqGXJfpK/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://media.giphy.com/media/xTiTnuYy0868blpcru/giphy.gif\"alt=\"\"style=\"width:18px;height:18px;\">","<img src=\"https://i.giphy.com/media/l41YwUYW1YjG01oWs/giphy.gif\"alt=\"\"style=\"width:18px;height:18px;\">","<img src=\"https://media.giphy.com/media/j6xKDD37CcxNCxr9nd/giphy.gif\"alt=\"出\"style=\"width:12px;height:18px;\">","<img src=\"https://media.giphy.com/media/SwCTLNmCGAg9suKBaC/giphy.gif\"alt=\"都\"style=\"width:12px;height:18px;\">","<img src=\"https://media.giphy.com/media/YTEjJR6c95FQMducoc/giphy.gif\"alt=\"另\"style=\"width:12px;height:18px;\">","<img src=\"https://media.tenor.com/images/c25a587b77b3e9e96d4ddf06999201d2/tenor.gif\"alt=\"\"style=\"width:18px;height:18px;\">","<img src=\"https://media.giphy.com/media/26tPcsPujXbK6a8KI/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://media.giphy.com/media/3o7Zeqr0Hkg7ySnl6g/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://media.giphy.com/media/l2JI88hmdFxy7ETXG/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://i.giphy.com/media/3ornjYlUge9w7Gxy12/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://i.giphy.com/media/3o7WTA9NEBDwpw9Kpy/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://i.giphy.com/media/3o7iN1Fcd1t4BehpPa/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://i.giphy.com/media/3o85g2bf49SRPoLxHG/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://i.giphy.com/media/3o6Ei00CP7aTeWIIkU/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://i.giphy.com/media/xT8qBe2PHToQ1O84da/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://media.giphy.com/media/3o6ZtriRsyLb8lpnZm/giphy.gif\"alt=\"nd\"style=\"width:12px;height:18px;\">","<img src=\"https://media.giphy.com/media/l0HlGQHfDGe8yNivu/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://media.giphy.com/media/lTka2Vy8S9sw04TEom/giphy.gif\"alt=\"谁\"style=\"width:12px;height:18px\">","<img src=\"https://media.giphy.com/media/PjP6TPp7n9OLvJlb1E/giphy.gif\"alt=\"親\"style=\"width:12px;height:18px;\">","<img src=\"https://media.giphy.com/media/3o6Zt5B2snTqhBRZ28/source.gif\"alt=\"刑\"style=\"width:12px;height:18px;\">","<img src=\"https://media.giphy.com/media/h25770fCKcyIPmbrRC/giphy.gif\"alt=\"亓\"style=\"width:12px;height:18px;\">","<img src=\"https://media.giphy.com/media/h25770fCKcyIPmbrRC/giphy.gif\"alt=\"亓\"style=\"width:12px;height:18px;\">","<img src=\"https://media.giphy.com/media/Y2h9nttWhMvX4hUZHM/giphy.gif\"alt=\"成\"style=\"width:18px;height:18px;\">","<img src=\"https://media.giphy.com/media/3o6ZsXjNhMRa1LrFe0/source.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://media.giphy.com/media/3oz8xWPOw7u3sLV7TG/source.gif\"alt=\"\"style=\"width:12px;height:18px\">","<img src=\"https://media.giphy.com/media/MYyZKTEBK6XuTHtiPm/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://media.giphy.com/media/MFm7UsqrsPfgI7UcTv/giphy.gif\"alt=\"如\"style=\"width:12px;height:18px;\">","<img src=\"https://media.giphy.com/media/jOVKPc2MkSx4IhhLLd/giphy.gif\"alt=\"\"style=\"width:18px;height:18px;\">","<img src=\"https://media.giphy.com/media/KGTlgGOUcvqYKuODut/giphy.gif\"alt=\"\"style=\"width:18px;height:18px;\">","<img src=\"https://media.giphy.com/media/XHYJdEhgRk6EPxlanu/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://media.giphy.com/media/giRf7UAx1huWrZq4eV/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">","<img src=\"https://media.giphy.com/media/5hs4d7eSL2ZfrUeiGh/giphy.gif\"alt=\"\"style=\"width:12px;height:18px;\">"
+]
+
+
+let hiddenArr=["https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP._VXqqQeRtNryAGUDSo8FVwHaQm%26pid%3DApi&f=1&ipt=ebfe487c75d8242df1eab7b4cd69e892fc0a9ad6e17442b4c66e388934328c42&ipo=images","https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.pinimg.com%2Foriginals%2F69%2F80%2F93%2F698093e43b2c9411ee2b1b234e6feae2.png&f=1&nofb=1&ipt=1382b90534aaf11f78aea5e29fb87119dc659f4ca9394151ed5b1c79ad0d4940&ipo=images","https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwally.walker.co.uk%2Fimages%2Fwoof.png&f=1&nofb=1&ipt=6c7652ca85d59c4051cd238d5da68826afa7025156897fa0c2c7b324ec8518a1&ipo=images","https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.FCfZNfj_RYlTjc8wQYeNdgAAAA%26pid%3DApi&f=1&ipt=91db9d911a2b5929443b61d0823df8d6c9662c3ccac8e50b7b3bd49bbb1322fb&ipo=images","https://img.pokemondb.net/sprites/home/normal/2x/avif/bulbasaur.avif"]
+//<img src=\"xxx\"alt=\"\"style=\"width:12px;height:18px;\" onClick=\"appendClickableImageToList(this.src)\">"
+
+
+let maxCells=8000
+let frontTag = "<img src=\""
+let endTag = "\"alt=\"\"style=\"height:18px;\" onClick=\"appendClickableImageToList(this.src);\">"
+let randArr=[]
+
+function creatRandArray()
+{
+ for(let randIndex=0;randIndex<hiddenArr.length;randIndex++)
+ {
+  randArr[randIndex]=Math.floor(Math.random() * maxCells);
+ }
+}
+
+
+
+let randomNumber;
+let randomCharacterPickerNumberArr=[]
+function addUniqueRandomNumber(maxValue) {
+ randomCharacterPickerNumberArr=[]
+    for(let lazy=0;lazy<999;lazy++)
+    {
+        randomNumber = Math.floor(Math.random() * maxValue);
+    if(randomCharacterPickerNumberArr.includes(randomNumber))
+    {
+    }
+    else {
+    randomCharacterPickerNumberArr.push(randomNumber);
+}
+ console.log(randomCharacterPickerNumberArr)
+}
+}
+
+
+
+
+
+
+
+
+
+function appendGifUrl()
+{
+//<!DOCTYPE html>let gif="<img src=\""+document.getElementById("newGif").value+"\"alt=\"\"style=\"width:12px;height:18px;\">"
+//console.log(randGifArr)
+//randGifArr.push(gif)
+creatRandArray()
+addUniqueRandomNumber(hiddenArr.length)
+let concatString=''
+let hiddenCharIndex=0
+let c=0
+for(let i =0;i<maxCells;i++)
+{
+ 
+ if (randArr.includes(i)) {
+  
+  concatString = concatString.concat(frontTag + hiddenArr[randomCharacterPickerNumberArr[c]] + endTag);
+  c++
+  
+  
+  
+  
+
+
+
+
+
+
+//hidden characters appendnig in order. no!
+
+
+
+
+
+
+
+
+
+
+ }
+ else{
+  concatString=concatString.concat(randGifArr[Math.floor(Math.random ()*(randGifArr.length))])
+ }
+}
+document.getElementById('gifs').innerHTML=concatString
+document.getElementById("imageList").innerHTML="FOUND"
+}
+
+
+
+
+
+  document.querySelectorAll('.clickable').forEach(img => {
+ img.addEventListener("click", () => {
+  imageUrl = img.src; // Get the clicked image's URL
+  event.target.onclick = function () {
+            };
+  appendClickableImageToList(imageUrl); // Pass the URL to your function
+ });
+});
+
+
+
+
+
+function appendClickableImageToList(url) {
+    // Find the list by ID
+    //const list = document.getElementById(listId);
+console.log("workedurl"+url)
+    // Create the list item
+//const listItem = document.createElement("li");
+
+    // Create the clickable link
+    const link = document.createElement("a");
+    link.href = this.src//needs to be the corret img url
+    console.log("link"+ link)
+    link.target = "_blank"; // Opens the link in a new tab
+
+    // Create the image element
+    let image = document.createElement("img");
+    image = "<img src=\""+url+"\"alt=\"\"style=\"height:90px;\">"
+    console.log(image)
+   // image.alt = altText;
+//    image.style.cursor = "pointer"; // Changes the cursor to pointer on hover
+
+    // Append the image to the link, and the link to the list item
+    
+    
+    document.getElementById("imageList").innerHTML+=image
+    link.appendChild(image);
+    //listItem.appendChild(link);
+
+    // Append the list item to the list
+    //list.appendChild(listItem);
+}
+
+
+appendGifUrl()
+</script>
+</html>
