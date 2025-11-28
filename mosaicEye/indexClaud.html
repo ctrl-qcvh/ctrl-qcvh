@@ -1,0 +1,186 @@
+```html
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Mosaic Image Processor</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        
+        #dropzone {
+            border: 6px dashed yellow;
+            width: calc(100% - 40px);
+            min-height: 200px;
+            background-color: red;
+            display: block;
+            padding: 20px;
+            box-sizing: border-box;
+            position: relative;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        
+        #dropzone.active {
+            border: 3px dashed black;
+            background-color: rgba(255, 0, 0, 0.8);
+        }
+        
+        .mosaic-image {
+            width: calc(100vw / 16);
+            height: auto;
+            display: inline-block;
+            position: relative;
+        }
+        
+        @keyframes backgroundCssHueRotate {
+            0% {
+                filter: hue-rotate(0deg);
+            }
+            100% {
+                filter: hue-rotate(360deg);
+            }
+        }
+        
+        #instructions {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body id="backgroundHue">
+    <div id="instructions">
+        <input type="file" id="file-input" accept="image/*,video/*">
+        <p>Browse for an image or drag and drop below. Processing takes a moment. Please be patient. 
+        ALPHA (Desktop only)</p>
+    </div>
+    
+    <div id="dropzone"></div>
+
+    <script>
+        // Configuration
+        const MOSAIC_COUNT = 315;
+        const HUE_BLOCK = 15;
+        const BLEND_MODES = [
+            'saturation', 'difference', 'normal', 'multiply', 'screen',
+            'overlay', 'darken', 'lighten', 'color-dodge', 'color-burn',
+            'hard-light', 'soft-light', 'hue', 'color', 'luminosity',
+            'inherit', 'initial', 'revert', 'revert-layer', 'color-dodge',
+            'exclusion'
+        ];
+
+        // DOM elements
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('file-input');
+        const reader = new FileReader();
+
+        // File input handler
+        fileInput.addEventListener('change', event => {
+            const file = event.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                processFile(file);
+            } else {
+                alert('Please select a valid image file');
+            }
+        });
+
+        // Drag and drop handlers
+        dropzone.addEventListener('dragenter', event => {
+            event.preventDefault();
+            dropzone.classList.add('active');
+        });
+
+        dropzone.addEventListener('dragover', event => {
+            event.preventDefault();
+        });
+
+        dropzone.addEventListener('dragleave', event => {
+            event.preventDefault();
+            if (event.target === dropzone) {
+                dropzone.classList.remove('active');
+            }
+        });
+
+        dropzone.addEventListener('drop', event => {
+            event.preventDefault();
+            dropzone.classList.remove('active');
+            
+            const file = event.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                processFile(file);
+            } else {
+                alert('Please drop a valid image file');
+            }
+        });
+
+        // Process uploaded file
+        function processFile(file) {
+            reader.onloadend = function() {
+                createMosaic(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Create mosaic effect
+        function createMosaic(imageData) {
+            // Clear existing images
+            dropzone.innerHTML = '';
+            let z=0
+            const screenWidth = window.innerWidth;
+            const imageWidth = Math.floor(screenWidth / 16);
+            
+            for (let i = 0; i < MOSAIC_COUNT; i++) {
+                const img = document.createElement('img');
+                
+                // Set unique ID and classes
+                img.id = `mosaic-img-${i}`;
+                img.className = 'mosaic-image';
+                img.src = imageData;
+                img.style.width = `${imageWidth}px`;
+                
+                // Apply blend mode based on position
+                const modeIndex = Math.floor(i / 15) % BLEND_MODES.length;
+                img.style.mixBlendMode = BLEND_MODES[modeIndex];
+                
+                // Apply hue rotation
+                const hueRotation = (i % HUE_BLOCK) * 24; // 360/15 = 24 degrees per block
+                img.style.filter = `hue-rotate(${hueRotation}deg)`;
+                
+                // Add z-index variation for layering effect
+                if(i%2===1)
+                {
+                 z++
+                }
+                img.style.zIndex =z;
+                //img.style.zIndex = i % 2 === 0 ? '1' : '2';
+                
+                dropzone.appendChild(img);
+            }
+        }
+
+        // Optional: Add window resize handler to adjust image sizes
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                const images = dropzone.querySelectorAll('.mosaic-image');
+                const newWidth = Math.floor(window.innerWidth / 16);
+                images.forEach(img => {
+                    img.style.width = `${newWidth}px`;
+                });
+            }, 250);
+        });
+    </script>
+</body>
+
+</html>
+```
